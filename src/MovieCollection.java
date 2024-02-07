@@ -165,38 +165,32 @@ public class MovieCollection
 
     private void searchCast()
     {
-        System.out.println("Enter cast member: ");
+        System.out.print("Enter cast member: ");
         String castMember = scanner.nextLine();
 
         //prevent case sensitivity
         castMember = castMember.toLowerCase();
 
-        ArrayList<Movie> results = new ArrayList<Movie>();
+        ArrayList<String> stringArrayList = new ArrayList<String>();
 
         for (int i = 0; i < movies.size(); i++)
         {
             String cast = movies.get(i).getCast();
             cast = cast.toLowerCase();
             String[] split = cast.split("\\|");
-
             for (String each : split) {
-                if (each.indexOf(castMember) != -1)
+                if (!stringArrayList.contains(castMember))
                 {
-                    //add the Movie object to the results list
-                    results.add(movies.get(i));
+                    stringArrayList.add(each);
                 }
             }
         }
-        sortResults(results);
-
-        for (int i = 0; i < results.size(); i++)
-        {
-            String keyword = results.get(i).getCast();
-
-            // this will print index 0 as choice 1 in the results list; better for user!
-            int choiceNum = i + 1;
-
-            System.out.println("" + choiceNum + ". " + keyword);
+        sortResult(stringArrayList);
+        int idx = 0;
+        for (String actor : stringArrayList) {
+            int choiceNum = idx + 1;
+            System.out.println("" + choiceNum + ". " + actor);
+            idx++;
         }
     }
 
@@ -254,7 +248,46 @@ public class MovieCollection
 
     private void listGenres()
     {
+        ArrayList<String> list = new ArrayList<String>();
+        for (int i = 0; i < movies.size(); i++) {
+            String str = movies.get(i).getGenres();
+            String[] arr = str.split("\\|");
+            for (String each : arr) {
+                if (!list.contains(each)) {
+                    list.add(each);
+                }
+            }
+        }
+        sortResult(list);
+        int idx = 0;
+        for (String genre : list) {
+            int choiceNum = idx + 1;
+            System.out.println("" + choiceNum + ". " + genre);
+            idx++;
+        }
+        System.out.print("Choose a genre: ");
 
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+
+        String selectedGenre = list.get(choice - 1);
+        ArrayList<Movie> movies1 = new ArrayList<Movie>();
+        for (int i = 0; i < movies.size(); i++) {
+            if (movies.get(i).getGenres().contains(selectedGenre)) {
+                System.out.println("" + i + ". " + movies.get(i).getTitle());
+                movies1.add(movies.get(i));
+            }
+        }
+        sortResults(movies1);
+        System.out.print("Choose a movie: ");
+        int choice2 = scanner.nextInt();
+        scanner.nextLine();
+
+        Movie selectedMovie = movies1.get(choice);
+        displayMovieInfo(selectedMovie);
+
+        System.out.println("\n ** Press Enter to Return to Main Menu **");
+        scanner.nextLine();
     }
 
     private void listHighestRated()
@@ -302,6 +335,21 @@ public class MovieCollection
         {
             // Print out the exception that occurred
             System.out.println("Unable to access " + exception.getMessage());
+        }
+    }
+    private void sortResult(ArrayList<String> listToSort)
+    {
+        for (int j = 1; j < listToSort.size(); j++)
+        {
+            String tempTitle = listToSort.get(j);
+
+            int possibleIndex = j;
+            while (possibleIndex > 0 && tempTitle.compareTo(listToSort.get(possibleIndex - 1)) < 0)
+            {
+                listToSort.set(possibleIndex, listToSort.get(possibleIndex - 1));
+                possibleIndex--;
+            }
+            listToSort.set(possibleIndex, tempTitle);
         }
     }
 }

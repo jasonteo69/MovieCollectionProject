@@ -171,27 +171,51 @@ public class MovieCollection
         //prevent case sensitivity
         castMember = castMember.toLowerCase();
 
-        ArrayList<String> stringArrayList = new ArrayList<String>();
-
-        for (int i = 0; i < movies.size(); i++)
-        {
-            String cast = movies.get(i).getCast();
-            cast = cast.toLowerCase();
-            String[] split = cast.split("\\|");
-            for (String each : split) {
-                if (!stringArrayList.contains(castMember))
-                {
-                    stringArrayList.add(each);
+        ArrayList<String> arrList = new ArrayList<String>();
+        for (int i = 0; i < movies.size(); i++) {
+            String str = movies.get(i).getCast();
+            String[] arr = str.split("\\|");
+            for (String each : arr) {
+                String inLower = each.toLowerCase();
+                if (!arrList.contains(each) && inLower.contains(castMember)) {
+                    arrList.add(each);
                 }
             }
         }
-        sortResult(stringArrayList);
+        sortResult(arrList);
         int idx = 0;
-        for (String actor : stringArrayList) {
+        for (String cast : arrList) {
             int choiceNum = idx + 1;
-            System.out.println("" + choiceNum + ". " + actor);
+            System.out.println("" + choiceNum + ". " + cast);
             idx++;
         }
+        System.out.println("Which actor would you like to learn more about");
+        System.out.print("Enter actor: ");
+
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+
+        String selectedActor = arrList.get(choice - 1);
+
+        ArrayList<Movie> movies1 = new ArrayList<Movie>();
+        for (int i = 0; i < movies.size(); i++) {
+            if (movies.get(i).getCast().contains(selectedActor)) {
+                movies1.add(movies.get(i));
+            }
+        }
+        sortResults(movies1);
+        for (int k = 0; k < movies1.size(); k++) {
+            int track = k + 1;
+            System.out.println("" + track + ". " + movies1.get(k).getTitle());
+        }
+        System.out.print("Choose a movie: ");
+        int choice2 = scanner.nextInt();
+        scanner.nextLine();
+        Movie selectedMovie = movies1.get(choice2 - 1);
+        displayMovieInfo(selectedMovie);
+
+        System.out.println("\n ** Press Enter to Return to Main Menu **");
+        scanner.nextLine();
     }
 
     private void searchKeywords()
@@ -271,19 +295,22 @@ public class MovieCollection
         scanner.nextLine();
 
         String selectedGenre = list.get(choice - 1);
+
         ArrayList<Movie> movies1 = new ArrayList<Movie>();
         for (int i = 0; i < movies.size(); i++) {
             if (movies.get(i).getGenres().contains(selectedGenre)) {
-                System.out.println("" + i + ". " + movies.get(i).getTitle());
                 movies1.add(movies.get(i));
             }
         }
         sortResults(movies1);
+        for (int k = 0; k < movies1.size(); k++) {
+            int track = k + 1;
+            System.out.println("" + track + ". " + movies1.get(k).getTitle());
+        }
         System.out.print("Choose a movie: ");
         int choice2 = scanner.nextInt();
         scanner.nextLine();
-
-        Movie selectedMovie = movies1.get(choice);
+        Movie selectedMovie = movies1.get(choice2 - 1);
         displayMovieInfo(selectedMovie);
 
         System.out.println("\n ** Press Enter to Return to Main Menu **");
@@ -292,7 +319,25 @@ public class MovieCollection
 
     private void listHighestRated()
     {
-
+        double max = 0.0;
+        double nxtMax = 0.0;
+        int pos = 0;
+        ArrayList<String> highestRated = new ArrayList<String>();
+        for (int k = 0; k < 50; k++) {
+            highestRated.add(String.valueOf(max));
+            k++;
+            for (int i = 0; i < movies.size() - 1; i++) {
+                max = movies.get(i).getUserRating();
+                nxtMax = movies.get(i + 1).getUserRating();
+                if (max < nxtMax) {
+                    max = nxtMax;
+                    pos = i;
+                    movies.remove(pos);
+                    i--;
+                }
+            }
+        }
+        System.out.println(highestRated);
     }
 
     private void listHighestRevenue()

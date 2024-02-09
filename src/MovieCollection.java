@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class MovieCollection
@@ -317,29 +318,30 @@ public class MovieCollection
         scanner.nextLine();
     }
 
-    private void listHighestRated()
-    {
+    private void listHighestRated() {
         double max = 0.0;
-        double nxtMax = 0.0;
-        int pos = 0;
-        ArrayList<String> highestRated = new ArrayList<String>();
-        for (int k = 0; k < 50; k++) {
-            highestRated.add(String.valueOf(max));
-            k++;
-            for (int i = 0; i < movies.size() - 1; i++) {
-                max = movies.get(i).getUserRating();
-                nxtMax = movies.get(i + 1).getUserRating();
-                if (max < nxtMax) {
-                    max = nxtMax;
-                    pos = i;
-                    movies.remove(pos);
-                    i--;
+        Double[] arr = new Double[movies.size()];
+        for (int i = 0; i < movies.size(); i++) {
+            arr[i] = movies.get(i).getUserRating();
+        }
+        String title = "";
+        Arrays.sort(arr);
+        ArrayList<String> titles = new ArrayList<String>();
+        for (int i = 0; i < movies.size(); i++) {
+            for (int k = 0; k < arr.length; k++) {
+                if (movies.get(i).getUserRating() == arr[k]) {
+                    title = movies.get(i).getTitle();
                 }
+                titles.add(title);
             }
         }
-        System.out.println(highestRated);
-    }
+        int num = 1;
+        for (int i = movies.size() - 1; i >= movies.size() - 50; i--) {
+            System.out.println("" + num + ". " + titles.get(i) + ": " + arr[i]);
+            num++;
+        }
 
+    }
     private void listHighestRevenue()
     {
 

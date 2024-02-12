@@ -344,7 +344,28 @@ public class MovieCollection
     }
     private void listHighestRevenue()
     {
-
+        HashMap<Integer, String> map = new HashMap<Integer, String>();
+        int[] rev = new int[movies.size()];
+        ArrayList<String> tit = new ArrayList<String>();
+        for (int i = 0; i < movies.size(); i++) {
+            int revenue = movies.get(i).getRevenue();
+            String title = movies.get(i).getTitle();
+            rev[i] = revenue;
+            map.put(revenue, title);
+        }
+        Arrays.sort(rev);
+        int[] highest = new int[50];
+        int idx = 0;
+        for (int i = rev.length - 1; i >= rev.length - 50; i--) {
+            highest[idx] = rev[i];
+            idx++;
+        }
+        int num = 0;
+        for (int i = 0; i < highest.length; i++) {
+            num = i + 1;
+            String title = map.get(highest[i]);
+            System.out.println("" + num + ". " + title + ": "  + highest[i]);
+        }
     }
 
     private void importMovieList(String fileName)

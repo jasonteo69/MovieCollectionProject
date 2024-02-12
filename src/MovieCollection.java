@@ -321,38 +321,51 @@ public class MovieCollection
     private void listHighestRated() {
         double max = 0.0;
         Double[] arr = new Double[movies.size()];
+
         for (int i = 0; i < movies.size(); i++) {
             arr[i] = movies.get(i).getUserRating();
         }
-        String title = "";
+
         Arrays.sort(arr);
         ArrayList<String> titles = new ArrayList<String>();
-        for (int i = 0; i < movies.size(); i++) {
-            for (int k = 0; k < arr.length; k++) {
-                if (movies.get(i).getUserRating() == arr[k]) {
-                    title = movies.get(i).getTitle();
-                }
-                titles.add(title);
-            }
-        }
-        int num = 1;
-        for (int i = movies.size() - 1; i >= movies.size() - 50; i--) {
-            System.out.println("" + num + ". " + titles.get(i) + ": " + arr[i]);
-            num++;
+        double[] sortedArr = new double[50];
+
+        int idx = arr.length - 51;
+        for (int i = 0; i < sortedArr.length; i++) {
+            sortedArr[i] = arr[idx];
+            idx++;
         }
 
+        for (int i = 0; i < movies.size(); i++) {
+            double rating = movies.get(i).getUserRating();
+            //if ratings match, find the title
+            for (int k = 49; k > 0; k--) {
+                if (rating == sortedArr[k]) {
+                    titles.add(movies.get(i).getTitle());
+                    break;
+                }
+            }
+        }
+        int num = 0;
+        int here = 49;
+        for (int i = 0; i < sortedArr.length; i++) {
+            num = i + 1;
+            String movieName = titles.get(here);
+            System.out.println("" + num + ". " + movieName + ": "  + sortedArr[here]);
+            here--;
+        }
     }
     private void listHighestRevenue()
     {
         HashMap<Integer, String> map = new HashMap<Integer, String>();
         int[] rev = new int[movies.size()];
-        ArrayList<String> tit = new ArrayList<String>();
         for (int i = 0; i < movies.size(); i++) {
             int revenue = movies.get(i).getRevenue();
             String title = movies.get(i).getTitle();
             rev[i] = revenue;
             map.put(revenue, title);
         }
+
         Arrays.sort(rev);
         int[] highest = new int[50];
         int idx = 0;
@@ -360,6 +373,7 @@ public class MovieCollection
             highest[idx] = rev[i];
             idx++;
         }
+
         int num = 0;
         for (int i = 0; i < highest.length; i++) {
             num = i + 1;

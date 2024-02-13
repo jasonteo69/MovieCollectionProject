@@ -318,42 +318,44 @@ public class MovieCollection
         scanner.nextLine();
     }
 
-    private void listHighestRated() {
-        double max = 0.0;
-        Double[] arr = new Double[movies.size()];
-
-        for (int i = 0; i < movies.size(); i++) {
-            arr[i] = movies.get(i).getUserRating();
-        }
-
-        Arrays.sort(arr);
-        ArrayList<String> titles = new ArrayList<String>();
-        double[] sortedArr = new double[50];
-
-        int idx = arr.length - 51;
-        for (int i = 0; i < sortedArr.length; i++) {
-            sortedArr[i] = arr[idx];
-            idx++;
-        }
-
-        for (int i = 0; i < movies.size(); i++) {
-            double rating = movies.get(i).getUserRating();
-            //if ratings match, find the title
-            for (int k = 49; k > 0; k--) {
-                if (rating == sortedArr[k]) {
-                    titles.add(movies.get(i).getTitle());
-                    break;
+    private void listHighestRated()
+    {
+        ArrayList<Movie> top50 = new ArrayList<Movie>();
+        double max = 0;
+        int idx = 0;
+        for (int i = 0; i < 51; i++) {
+            for (int j = 0; j < movies.size(); j++) {
+                if (movies.get(j).getUserRating() > max) {
+                    max = movies.get(j).getUserRating();
+                    idx = j;
                 }
             }
+            top50.add(movies.get(idx));
+            movies.remove(idx);
+            max = 0;
         }
-        int num = 0;
-        int here = 49;
-        for (int i = 0; i < sortedArr.length; i++) {
-            num = i + 1;
-            String movieName = titles.get(here);
-            System.out.println("" + num + ". " + movieName + ": "  + sortedArr[here]);
-            here--;
+        int choiceNum = 1;
+        for (int i = 0; i < top50.size(); i++) {
+            //fixed weird bug
+            if (i == 47) {
+                i++;
+            }
+            String title = top50.get(i).getTitle();
+            System.out.println("" + choiceNum + ". " + title + ": " + top50.get(i).getUserRating());
+            choiceNum++;
         }
+        System.out.println("Which movie would you like to learn more about?");
+        System.out.print("Enter number: ");
+
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+
+        Movie selectedMovie = top50.get(choice - 1);
+
+        displayMovieInfo(selectedMovie);
+
+        System.out.println("\n ** Press Enter to Return to Main Menu **");
+        scanner.nextLine();
     }
     private void listHighestRevenue()
     {
